@@ -72,3 +72,29 @@ void draw()
   
   cout();
 }
+
+Instrument byBusName(String busName)
+{
+  for (Instrument instrument : instruments)
+    if (instrument.hasBusName(busName))
+      return instrument;
+  return null;
+}
+
+void noteOn(int channel, int pitch, int velocity, long timestamp, String busName) {
+  Instrument instrument = byBusName(busName);
+  if (instrument != null)
+    instrument.noteOn(channel, pitch, velocity);
+}
+
+void noteOff(int channel, int pitch, int velocity, long timestamp, String busName) {
+  Instrument instrument = byBusName(busName);
+  if (instrument != null)
+    instrument.noteOff(channel, pitch, velocity);
+}
+
+void controllerChange(int channel, int number, int value, long timestamp, String busName) {
+  Instrument instrument = byBusName(busName);
+  if (instrument != null)
+    instrument.controllerChange(channel, number, value);
+}

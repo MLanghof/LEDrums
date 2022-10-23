@@ -3,7 +3,7 @@ abstract class Instrument
 {
   Instrument(String midiInputDeviceName, String busName)
   {
-    myBus = new MidiBus(this, busName);
+    myBus = new MidiBus(LEDrums_Processing.this, busName);
     if (!myBus.addInput(midiInputDeviceName))
       myBus = null;
     else
@@ -15,6 +15,11 @@ abstract class Instrument
   abstract void controllerChange(int channel, int number, int value);
 
   abstract void drawOn(PGraphics g);
+
+  boolean hasBusName(String busName)
+  {
+    return myBus != null && myBus.getBusName() == busName;
+  }
 
   protected MidiBus myBus;
 }
