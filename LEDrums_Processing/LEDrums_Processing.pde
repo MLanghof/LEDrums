@@ -11,10 +11,12 @@ import processing.serial.*;
 // The serial port:
 Serial myPort;
 
+ArrayList<Instrument> instruments = new ArrayList();
+
 void setup()
 {
   // With the default renderer, opening a Serial connection causes a 200 ms delay every few frames.
-  // Using e.g. P2D or P3D avoids this. 
+  // Using e.g. P2D or P3D avoids this.
   size(300, 300, P2D);
 
   myPort = new Serial(this, "COM4", 115200);
@@ -26,6 +28,9 @@ void setup()
 
   // Uncomment to see the names of connected MIDI devices.
   //MidiBus.list();
+
+  instruments.add(new MD90());
+  instruments.add(new Launchkey());
 }
 
 // Print any bytes currently waiting in the serial port.
@@ -55,7 +60,7 @@ boolean ensureHandshake()
 void draw()
 {
   // Without this delay, the arduino will sometimes get stuck during startup.
-  // Not a great workaround, but avoids the hassle.
+  // Not a great workaround, but avoids the hassle of dealing with it further.
   if (frameCount == 1)
     delay(4000);
 
@@ -66,16 +71,4 @@ void draw()
   background(0);
   
   cout();
-}
-
-void noteOn(int channel, int pitch, int velocity, long timestamp, String busName) {
-  println("noteOn on bus", busName, ":", channel, pitch, velocity, busName);
-}
-
-void noteOff(int channel, int pitch, int velocity, long timestamp, String busName) {
-  println("noteOff on bus", busName, ":", channel, pitch, velocity, busName);
-}
-
-void controllerChange(int channel, int number, int value, long timestamp, String busName) {
-  println("controllerChange on bus", busName, ":", channel, number, value, busName);
 }
