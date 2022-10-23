@@ -10,6 +10,7 @@ import processing.serial.*;
 
 // The serial port:
 Serial myPort;
+Mailman mailman;
 
 ArrayList<Instrument> instruments = new ArrayList();
 
@@ -21,6 +22,7 @@ void setup()
 
   myPort = new Serial(this, "COM4", 115200);
   myPort.buffer(1);
+  mailman = new Mailman(myPort);
 
   // For simplicity, we will perform one send over serial per rendered frame for now.
   // Use a high frame rate to achieve decent throughput.
@@ -70,7 +72,10 @@ void draw()
 
   background(0);
   
-  cout();
+  mailman.attemptOneDelivery();
+
+  if (frameCount % 1000 == 999)
+    mailman.reportSerialStatistics();
 }
 
 Instrument byBusName(String busName)
