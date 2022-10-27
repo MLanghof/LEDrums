@@ -34,6 +34,51 @@ void setup() {
   delay(500);
 }
 
+// Reimplementation of Stream::timedRead because it's private but needed. Yawn.
+long _startMillis;
+int timedRead()
+{
+  int c;
+  _startMillis = millis();
+  do {
+    c = Serial.read();
+    if (c >= 0) return c;
+  } while(millis() - _startMillis < 1000);
+  return -1;     // -1 indicates timeout
+}
+
+// Serial.readStringUntil(255) does not work. It's fixed in 1.x but still broken in 2.0.
+// https://github.com/arduino/Arduino/pull/7053
+String readStringUntil255()
+{
+  String ret;
+  int c = timedRead();
+  while (c >= 0 && c != 255)
+  {
+    ret += (char)c;
+    c = timedRead();
+  }
+  return ret;
+}
+
+void handleSerialInput() {
+  String s = readStringUntil255();
+  if (s.length() != 5) {
+    //Serial.print((char)s.length());
+    return;
+  }
+
+  int txId = s[0];
+  Serial.print((char)txId);
+
+  int a = s[1];
+  int b = s[2];
+  int c = s[3];
+  int d = s[4];
+
+  // TODO: Use these values :)
+}
+
 bool loaded = false;
 
 void loop() {
@@ -49,12 +94,9 @@ void loop() {
     loaded = true;
     return;
   }
-
+  
   while (Serial.available() > 0) {
-    // Note: Spurious garbage appears in Serial Monitor at a baud rate of 115200.
-    // See https://github.com/arduino/arduino-ide/issues/375. Should not matter
-    // for this project though.
-    Serial.print((char)Serial.read());
+    handleSerialInput();
   }
 }
 
