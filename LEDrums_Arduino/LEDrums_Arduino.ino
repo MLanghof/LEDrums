@@ -61,6 +61,7 @@ String readStringUntil255()
   return ret;
 }
 
+int lastAckedTxId = -1;
 void handleSerialInput() {
   String s = readStringUntil255();
   if (s.length() != 5) {
@@ -69,7 +70,11 @@ void handleSerialInput() {
   }
 
   int txId = s[0];
+  if (txId == lastAckedTxId)
+    return;
+
   Serial.print((char)txId);
+  lastAckedTxId = txId;
 
   int a = s[1];
   int b = s[2];
