@@ -8,7 +8,10 @@ class Launchkey extends Instrument
 
   void noteOn(int channel, int pitch, int velocity) {
     //println("NoteOn:", channel, pitch, velocity);
-    mailman.enqueue(channel, pitch, velocity, 'L');
+    if (channel == 0)
+      mailman.enqueue(channel, pitch, velocity, 'L');
+    if (channel == 9) // drumpads
+      mailman.enqueue(channel, pitch, velocity, '9'); // pretend to be MD90
   }
 
   void noteOff(int channel, int pitch, int velocity) {
